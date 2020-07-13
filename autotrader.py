@@ -9,3 +9,4 @@ print(robinhood_client.login(username=username, password=password,qr_code=qr_cod
 
 # # Market price
 # print(stock_quote['last_trade_price'])
+#test 
