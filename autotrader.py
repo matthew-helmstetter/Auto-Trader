@@ -1,12 +1,32 @@
-from Robinhood import Robinhood
+from robinhood_crypto_api import RobinhoodCrypto
 from login import *
-robinhood_client = Robinhood()
-print(robinhood_client.login(username=username, password=password,qr_code=qr_code))
-# stock_instrument = robinhood_client.instruments('MSFT')[0]
+class LoginException (AutoTraderException):
+	pass
 
-# # Get a stock's quote
-# stock_quote = robinhood_client.quote_data('MSFT')
+def main ():
+	try:
+		robinhood_client = RobinhoodCrypto(username, password)
+	except:
+		raise LoginException()
+	quote_info = r.quotes()
+	price = round(float(quote_info['mark_price']) * 1.005, 2)
+	amount_to_spend = 10
+	bitcoin_quantity = calculate_ten_dollars(amount_to_spend, bitcoin_price)
 
-# # Market price
-# print(stock_quote['last_trade_price'])
-#test 
+
+def calculate_ten_dollars(amount_to_spend, current_price):
+	quantity = amount_to_spend/price
+	return quantity
+
+main()
+# market_order_info = r.trade(
+#     'BTCUSD',
+#     price=round(float(quote_info['mark_price']) * 1.005, 2),
+#     quantity="0.00005",
+#     side="buy",
+#     time_in_force="gtc",
+#     type="market"
+# )
+# order_id = market_order_info['id']
+# print('market order {} status: {}'.format(order_id, r.order_status(order_id)))
+
