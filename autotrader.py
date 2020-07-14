@@ -1,5 +1,7 @@
 from robinhood_crypto_api import RobinhoodCrypto
 from login import *
+class AutoTraderException(Exception):
+    pass
 class LoginException (AutoTraderException):
 	pass
 
@@ -8,17 +10,16 @@ def main ():
 		robinhood_client = RobinhoodCrypto(username, password)
 	except:
 		raise LoginException()
-	quote_info = r.quotes()
-	price = round(float(quote_info['mark_price']) * 1.005, 2)
 	amount_to_spend = 10
-	bitcoin_quantity = calculate_ten_dollars(amount_to_spend, bitcoin_price)
+	bitcoin_quantity = calculate_ten_dollars(robinhood_client,amount_to_spend)
 
 
-def calculate_ten_dollars(amount_to_spend, current_price):
+def calculate_ten_dollars(client, amount_to_spend):
+	quote_info = client.quotes()
+	price = round(float(quote_info['mark_price']) * 1.005, 2)
 	quantity = amount_to_spend/price
 	return quantity
 
-main()
 # market_order_info = r.trade(
 #     'BTCUSD',
 #     price=round(float(quote_info['mark_price']) * 1.005, 2),
