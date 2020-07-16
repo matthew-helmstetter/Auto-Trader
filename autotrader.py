@@ -29,6 +29,7 @@ def calculate_sell_profit(robinhood_client):
 
 def calculate_percent_yield(capital, profit):
 	return profit/capital*100
+	test
 # if bought below ask_price won't sell instantly
 # quote_info = robinhood_client.quotes()
 # market_order_info = robinhood_client.trade(
