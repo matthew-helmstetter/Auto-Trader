@@ -15,18 +15,20 @@ def calculate_buy_quantity(robinhood_client, amount_to_spend):
 	quantity = amount_to_spend/price
 	return quantity
 
-# you just need to know how much yield and then decide to sell
-def calculate_sell_profit(robinhood_client, bitcoin_quantity):
+# Finds BTC then calculates total yield if sold
+def calculate_sell_profit(robinhood_client):
 	quote_info = robinhood_client.quotes()
 	quote_price = round(float(quote_info['bid_price']), 2)
 	holdings_info = robinhood_client.holdings()
 	for asset in holdings_info:
 		for cost_base in asset['cost_bases']:
 			if cost_base['currency_id'] == '1072fc76-1862-41ab-82c2-485837590762':
-				test
-	return price
-quantity*sell = amount
+				quantity = cost_base['direct_quantity']
+				capital = cost_base['direct_cost_basis']
+	return quote_price*float(quantity) - float(capital)
 
+def calculate_percent_yield(capital, profit):
+	return profit/capital*100
 # if bought below ask_price won't sell instantly
 # quote_info = robinhood_client.quotes()
 # market_order_info = robinhood_client.trade(
