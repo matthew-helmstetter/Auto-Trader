@@ -93,7 +93,6 @@ def sell_bitcoin(robinhood_client, quantity):
 # buy BTC but do not return true until it has actually bought
 def buy_bitcoin(robinhood_client, quantity):
 	quote_info = robinhood_client.quotes()
-	pre_holdings_trade_count = len(robinhood_client.trade_history()['results'])
 	market_order_info = robinhood_client.trade(
 	    'BTCUSD',
 	    price=round(float(quote_info['mark_price']) * 1.005, 2),
@@ -102,9 +101,9 @@ def buy_bitcoin(robinhood_client, quantity):
 	    time_in_force="gtc",
 	    type="market"
 	)
-	while pre_holdings_trade_count == post_holdings_trade_count:
-		post_holdings_trade_count = len(robinhood_client.trade_history()['results'])
-		time.sleep(2)
+	order_id = market_order_info['id']
+	while robinhood_client.order_status('4d4014c9-e0df-4ea1-b1a2-6e71233ea3a2') != 'filled':
+		time.sleep(5)
 	return market_order_info
 
 
