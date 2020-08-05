@@ -3,7 +3,7 @@ from login import *
 import time
 
 # TODO convert to OOP
-def main ():
+def autotrader():
 	try:
 		robinhood_client = login()
 	except:
@@ -15,9 +15,9 @@ def main ():
 	percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
 	counter = 0
 	while percentage_yield < upper_percentage and counter < 5:
-		print('still not true')
-		counter += 1
 		time.sleep(5)
+		percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
+
 
 
 def login():
