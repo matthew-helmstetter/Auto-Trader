@@ -3,6 +3,7 @@ from login import *
 import time
 
 # TODO convert to OOP
+# TOOD implement trading
 def autotrader():
 	try:
 		robinhood_client = login()
@@ -18,10 +19,13 @@ def autotrader():
 		print('False')
 		percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
 
-
-
 def login():
 	return RobinhoodCrypto(username, password)
+
+# This will calculate the cost at which the original purchase of BTC was
+# It will be used to help determine when to buy next
+def calculate_original_buy (robinhood_client):
+
 
 # Returns quatity of bitcoin to buy. Done in cents only works with a min amount of 1.50
 # TODO fix this later to work with lower denominations
