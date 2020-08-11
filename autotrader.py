@@ -14,10 +14,15 @@ def autotrader():
 	bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
 	percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
 	counter = 0
+
 	while percentage_yield < upper_percentage and counter < 5:
 		time.sleep(5)
 		print('False')
 		percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
+		# sell BTC
+
+	# while percentage is above previous amount loop
+	# 	make order then store order_id
 
 def login():
 	return RobinhoodCrypto(username, password)
@@ -25,8 +30,12 @@ def login():
 # This will calculate the cost at which the original purchase of BTC was
 # It will be used to help determine when to buy next
 # TODO get the original buy amount
-def calculate_percent_change_from_original(robinhood_client):
+# Maybe start storing the buy id then use that to find quantity
+def calculate_percent_change_from_original(robinhood_client, order_id):
 	quote_info = robinhood_client.quotes()
+	trade_history = robinhood_client.trade_history()['results']
+	most_recent_trade = trade_history[0]
+	previous
 	# quote_price = round(float(quote_info['bid_price']), 2)
 	# holdings_info = robinhood_client.holdings()
 	# for asset in holdings_info:
@@ -104,7 +113,7 @@ def buy_bitcoin(robinhood_client, quantity):
 	    type="market"
 	)
 	order_id = market_order_info['id']
-	while robinhood_client.order_status('4d4014c9-e0df-4ea1-b1a2-6e71233ea3a2') != 'filled':
+	while robinhood_client.order_status(order_id) != 'filled':
 		time.sleep(5)
 	return market_order_info
 
