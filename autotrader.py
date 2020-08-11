@@ -40,16 +40,7 @@ def calculate_percent_change_from_original(robinhood_client, order_id):
 	for trade in trade_history:
 		if trade['id'] == order_id:
 			previous_price = round(float(trade['price']),2)
-
 	return previous_price/current_price*100-100
-	# quote_price = round(float(quote_info['bid_price']), 2)
-	# holdings_info = robinhood_client.holdings()
-	# for asset in holdings_info:
-	# 	for cost_base in asset['cost_bases']:
-	# 		if cost_base['currency_id'] == '1072fc76-1862-41ab-82c2-485837590762':
-	# 			quantity = cost_base['direct_quantity']
-	# 			capital = cost_base['direct_cost_basis']
-	# return (quote_price*float(quantity) - float(capital))/float(capital) * 100
 
 
 # Returns quatity of bitcoin to buy. Done in cents only works with a min amount of 1.50
