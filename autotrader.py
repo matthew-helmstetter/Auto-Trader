@@ -3,36 +3,54 @@ from login import *
 import time
 
 # TODO convert to OOP
-# TOOD implement trading
+# TOOD change the while True to break loop when certain time hits
 def autotrader():
+	amount_to_spend = 1000
+	upper_percentage = 1.0
 	try:
 		robinhood_client = login()
 	except:
 		raise LoginException()
-	amount_to_spend = 10
-	upper_percentage = 1.0
-	bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
-	percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
-	counter = 0
 
+	trade_history = robinhood_client.trade_history()
+	if bitcoin_holdings(robinhood_client) > 0:
+		# pulls most recent trade which would be the last buy order
+		market_buy = trade_history['results'][0]
+	else:
+		# since there is no holdings buy more BTC
+		print('BUY')
+		# bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
+		# market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
+
+	#TODO have it return price or some other metric when it does not sell
 	while True:
+		percentage_yield = calculate_percent_yield(robinhood_client)
+		while percentage_yield < upper_percentage:
+			print('DONT SELL')
+			time.sleep(60)
+			percentage_yield = round(calculate_percent_yield(robinhood_client),0)
+		# market_sell = sell_all_bitcoin(robinhood_client)
+		print('SELL')
 
-	while percentage_yield < upper_percentage and counter < 5:
-		time.sleep(5)
-		print('False')
-		percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
-		# sell BTC
-
-	# while percentage is above previous amount loop
-	# 	make order then store order_id
+		# wait until BTC drops in price then make a buy order
+		while calculate_percent_change_from_original(robinhood_client, market_sell['id']) > 0:
+			print('DONT BUY')
+			time.sleep(60)
+		bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
+		# market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
+		print('BUY')
 
 def login():
 	return RobinhoodCrypto(username, password)
 
-# This will calculate the cost at which the original purchase of BTC was
-# It will be used to help determine when to buy next
-# TODO get the original buy amount
-# Maybe start storing the buy id then use that to find quantity
+def bitcoin_holdings(robinhood_client):
+	holdings_info = robinhood_client.holdings()
+	for asset in holdings_info:
+		for cost_base in asset['cost_bases']:
+			if cost_base['currency_id'] == '1072fc76-1862-41ab-82c2-485837590762':
+				quantity = cost_base['direct_quantity']
+	return float(quantity)
+# Returns the percent of change from the previous buy order_id compared to the current price
 def calculate_percent_change_from_original(robinhood_client, order_id):
 	quote_info = robinhood_client.quotes()
 	current_price = round(float(quote_info['mark_price']) * 1.005, 2)
@@ -53,7 +71,6 @@ def calculate_buy_quantity(robinhood_client, amount_to_spend):
 
 
 # Returns percentage yield from captial investment
-# TODO make more efficient
 def calculate_percent_yield(robinhood_client):
 	quote_info = robinhood_client.quotes()
 	quote_price = round(float(quote_info['bid_price']), 2)
@@ -66,6 +83,7 @@ def calculate_percent_yield(robinhood_client):
 	return (quote_price*float(quantity) - float(capital))/float(capital) * 100
 
 # TODO throw error if there is no BTC
+# TODO do not return until it is sold
 def sell_all_bitcoin(robinhood_client):
 	quote_info = robinhood_client.quotes()
 	quote_price = round(float(quote_info['bid_price']), 2)
@@ -74,15 +92,15 @@ def sell_all_bitcoin(robinhood_client):
 		for cost_base in asset['cost_bases']:
 			if cost_base['currency_id'] == '1072fc76-1862-41ab-82c2-485837590762':
 				quantity = cost_base['direct_quantity']
-	return quantity
-	# market_order_info = robinhood_client.trade(
-	#     'BTCUSD',
-	#     price=quote_price,
-	#     quantity=quantity,
-	#     side="sell",
-	#     time_in_force="gtc",
-	#     type="market"
-	# )
+	market_order_info = robinhood_client.trade(
+	    'BTCUSD',
+	    price=quote_price,
+	    quantity=quantity,
+	    side="sell",
+	    time_in_force="gtc",
+	    type="market"
+	)
+	return market_order_info
 	
 # Function used to sell set amount of bitcoin
 def sell_bitcoin(robinhood_client, quantity):
@@ -110,7 +128,7 @@ def buy_bitcoin(robinhood_client, quantity):
 	    type="market"
 	)
 	order_id = market_order_info['id']
-	while robinhood_client.order_status(order_id) != 'filled':
+	while robinhood_client.order_status(order_id)['state'] != 'filled':
 		time.sleep(5)
 	return market_order_info
 
