@@ -15,6 +15,8 @@ def autotrader():
 	percentage_yield = round(calculate_percent_yield(robinhood_client)*100,0)
 	counter = 0
 
+	while True:
+
 	while percentage_yield < upper_percentage and counter < 5:
 		time.sleep(5)
 		print('False')
@@ -33,9 +35,13 @@ def login():
 # Maybe start storing the buy id then use that to find quantity
 def calculate_percent_change_from_original(robinhood_client, order_id):
 	quote_info = robinhood_client.quotes()
+	current_price = round(float(quote_info['mark_price']) * 1.005, 2)
 	trade_history = robinhood_client.trade_history()['results']
-	most_recent_trade = trade_history[0]
-	previous
+	for trade in trade_history:
+		if trade['id'] == order_id:
+			previous_price = round(float(trade['price']),2)
+
+	return previous_price/current_price*100-100
 	# quote_price = round(float(quote_info['bid_price']), 2)
 	# holdings_info = robinhood_client.holdings()
 	# for asset in holdings_info:
