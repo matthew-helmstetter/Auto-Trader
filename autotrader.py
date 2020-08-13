@@ -84,6 +84,7 @@ def calculate_percent_yield(robinhood_client):
 
 # TODO throw error if there is no BTC
 # TODO do not return until it is sold
+# TODO test if it works
 def sell_all_bitcoin(robinhood_client):
 	quote_info = robinhood_client.quotes()
 	quote_price = round(float(quote_info['bid_price']), 2)
@@ -131,11 +132,6 @@ def buy_bitcoin(robinhood_client, quantity):
 	while robinhood_client.order_status(order_id)['state'] != 'filled':
 		time.sleep(5)
 	return market_order_info
-
-
-def test_buy_bitcoin(robinhood_client):
-	robinhood_client = login()
-	quantity = calculate_buy_quantity(robinhood_client, 150)
 
 
 # if bought below ask_price won't sell instantly
