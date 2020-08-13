@@ -31,7 +31,9 @@ def autotrader():
 			percentage_yield = round(calculate_percent_yield(robinhood_client),0)
 		# market_sell = sell_all_bitcoin(robinhood_client)
 		print('SELL')
-
+		
+		# delete this once done testing
+		break
 		# wait until BTC drops in price then make a buy order
 		while calculate_percent_change_from_original(robinhood_client, market_sell['id']) > 0:
 			print('DONT BUY')
