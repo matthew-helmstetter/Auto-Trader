@@ -4,7 +4,7 @@ import time
 
 # TODO convert to OOP
 # TOOD change the while True to break loop when certain time hits
-def autotrader():
+def autotrader(robinhood_client):
 	amount_to_spend = 1000
 	upper_percentage = 1.0
 	try:
@@ -19,8 +19,8 @@ def autotrader():
 	else:
 		# since there is no holdings buy more BTC
 		print('BUY')
-		# bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
-		# market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
+		bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
+		market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
 
 	#TODO have it return price or some other metric when it does not sell
 	while True:
@@ -29,9 +29,8 @@ def autotrader():
 			print('DONT SELL')
 			time.sleep(60)
 			percentage_yield = round(calculate_percent_yield(robinhood_client),0)
-		# market_sell = sell_all_bitcoin(robinhood_client)
+		market_sell = sell_all_bitcoin(robinhood_client)
 		print('SELL')
-		
 		# delete this once done testing
 		break
 		# wait until BTC drops in price then make a buy order
@@ -39,7 +38,7 @@ def autotrader():
 			print('DONT BUY')
 			time.sleep(60)
 		bitcoin_quantity = calculate_buy_quantity(robinhood_client,amount_to_spend)
-		# market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
+		market_buy = buy_bitcoin(robinhood_client, bitcoin_quantity)
 		print('BUY')
 
 def login():
@@ -73,6 +72,7 @@ def calculate_buy_quantity(robinhood_client, amount_to_spend):
 
 
 # Returns percentage yield from captial investment
+# TODO find bug where it might be using LTC
 def calculate_percent_yield(robinhood_client):
 	quote_info = robinhood_client.quotes()
 	quote_price = round(float(quote_info['bid_price']), 2)
@@ -117,6 +117,7 @@ def sell_bitcoin(robinhood_client, quantity):
 	    time_in_force="gtc",
 	    type="market"
 	)
+	return market_order_info
 
 
 # buy BTC but do not return true until it has actually bought
